@@ -12,8 +12,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
+using System.Drawing.Text;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Windows;
@@ -22,6 +23,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.TextFormatting;
 using System.Windows.Threading;
 using TexturePlugin;
 using static System.Net.Mime.MediaTypeNames;
@@ -319,7 +321,7 @@ namespace UIBlueprintEditor
                                     {
                                         Width = width,
                                         Height = height,
-                                        Foreground = System.Windows.Media.Brushes.Lime,
+                                        Foreground = Brushes.Lime,
                                         Text = uiComponent.Internal.InstanceName,
                                     };
 
@@ -402,6 +404,8 @@ namespace UIBlueprintEditor
                                     Height = height,
                                 };
 
+                                string sid = uiComponent.Internal.Text.Sid;
+
                                 // gets the colour from the xyz value directly from the component
                                 // most text fields use a FontEffect for outlines and colours but this is just easier to read
                                 var colorR = (byte)Math.Round(uiComponent.Internal.Color.x * 255);
@@ -420,15 +424,48 @@ namespace UIBlueprintEditor
                                 // if there's no text (instead it's set with a property connection or something) it will use InstanceName
                                 if (uiComponent.Internal.Text.Sid != "")
                                 {
-                                    tb.Text = uiComponent.Internal.Text.Sid;
+                                    // if its an id it will use the string of the id
+                                    if (sid.StartsWith("ID_"))
+                                    {
+                                        tb.Text = LocalizedStringDatabase.Current.GetString(sid);
+                                    }
+                                    else
+                                    {
+                                        tb.Text = sid;
+                                    }
                                 }
                                 else
                                 {
                                     tb.Text = uiComponent.Internal.InstanceName;
                                 }
 
+                                var fontEbxPath = rootObjectFont.Hd.Internal.FontLookup[0].FontAssetPath;
+
+                                var fontEbxTTF = App.AssetManager.GetEbx(fontEbxPath);
+                                ulong ttfRes = ((dynamic)fontEbxTTF.RootObject).FontResource;
+
+                                ResAssetEntry ttfResEntry = App.AssetManager.GetResEntry(ttfRes);
+                                
+                                using (Stream ttfStream = App.AssetManager.GetRes(ttfResEntry))
+                                {
+                                    string fontName = "./#" + fontEbxTTF.RootObject.FontFamilyName;
+
+                                    string tempFile = Path.Combine(Path.GetTempPath(), 
+                                        string.Format("{0:X16}.ttf", fontEbxTTF.RootObject.FontResource));
+
+                                    if (!File.Exists(tempFile))
+                                    {
+                                        using (var fs = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.Read))
+                                        {
+                                            ttfStream.CopyTo(fs);
+                                        }
+                                    }
+                                    
+                                    tb.FontFamily = new FontFamily(new Uri(tempFile, UriKind.Absolute), fontName);
+                                }
+
                                 tb.FontSize = fontSize;
-                                tb.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(colorR, colorG, colorB));
+                                tb.Foreground = new SolidColorBrush(Color.FromRgb(colorR, colorG, colorB));
 
                                 switch (uiComponent.Internal.Text.VerticalAlignment.ToString())
                                 {
@@ -522,7 +559,7 @@ namespace UIBlueprintEditor
                                 var colorG = (byte)Math.Round(rootObjectFill.BackgroundColor.Rgb.y * 255);
                                 var colorB = (byte)Math.Round(rootObjectFill.BackgroundColor.Rgb.z * 255);
 
-                                rect.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(colorR, colorG, colorB));
+                                rect.Fill = new SolidColorBrush(Color.FromRgb(colorR, colorG, colorB));
                                 rect.Opacity = alpha;
 
                                 if (isWidget)
@@ -622,7 +659,7 @@ namespace UIBlueprintEditor
                             {
                                 Width = width,
                                 Height = height,
-                                Fill = System.Windows.Media.Brushes.Orange,
+                                Fill = Brushes.Orange,
                                 Opacity = 0.05,
                             };
 

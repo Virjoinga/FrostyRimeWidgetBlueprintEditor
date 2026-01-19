@@ -50,6 +50,9 @@
 		<Reference Include="FrostySdk">
 			<HintPath>D:\Documents\gw2 stuff\FrostyEditor\FrostySdk.dll</HintPath>
 		</Reference>
+		<Reference Include="LocalizedStringPlugin">
+		  <HintPath>..\..\gw2 stuff\FrostyEditor\Plugins\LocalizedStringPlugin.dll</HintPath>
+		</Reference>
 		<Reference Include="Microsoft.CSharp" />
 		<Reference Include="TexturePlugin">
 		  <HintPath>..\..\gw2 stuff\FrostyEditor\Plugins\TexturePlugin.dll</HintPath>
