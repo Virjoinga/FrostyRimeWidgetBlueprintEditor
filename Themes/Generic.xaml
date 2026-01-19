@@ -22,7 +22,7 @@
                         <ctrl:FrostyDockablePanel ClipToBounds="True" x:Name="PART_UIEditorLayer" Visibility="Hidden" Grid.Column="0" Title="" TitleBarVisible="False">
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="25"/>
+                                    <RowDefinition Height="24"/>
                                     <RowDefinition Height="*"/>
                                 </Grid.RowDefinitions>
 
@@ -32,7 +32,7 @@
 
                                 <Border Panel.ZIndex="10">
                                     <DockPanel>
-                                        <Border Background="{StaticResource ControlBackground}" Margin="0"/>
+                                        <Border Background="{StaticResource ControlBackground}" Margin="-2"/>
                                     </DockPanel>
                                 </Border>
                                 
@@ -87,7 +87,7 @@
                             </ctrl:FrostyDockablePanel>
                         </Grid>
 
-                        <Button x:Name="PART_SwitchView" Width="25" Height="25" Margin="0,0,0,10" HorizontalAlignment="Right" VerticalAlignment="Top" ToolTip="Switch View" IsEnabled="True" Panel.ZIndex="999">
+                        <Button x:Name="PART_SwitchView" Width="24" Height="24" Margin="0,2,0,10" HorizontalAlignment="Right" VerticalAlignment="Top" ToolTip="Switch View" IsEnabled="True" Panel.ZIndex="999">
                             <Button.Content>
                                 <Image Width="14" Source="/FrostyEditor;component/Images/EditLabel.png"/>
                             </Button.Content>

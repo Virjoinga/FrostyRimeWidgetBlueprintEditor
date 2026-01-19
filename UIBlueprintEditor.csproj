@@ -31,28 +31,35 @@
 
 	<ItemGroup>
 	  <None Remove="Images\Grid.png" />
+	  <None Remove="Images\Precise_OFF.png" />
+	  <None Remove="Images\Precise_ON.png" />
 	  <None Remove="Images\Refresh.png" />
 	  <None Remove="Images\UITypeIcon.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Reference Include="FrostyControls">
-		  <HintPath>..\..\..\gw2 stuff\FrostyEditor\FrostyControls.dll</HintPath>
+		  <HintPath>..\..\gw2 stuff\FrostyEditor\FrostyControls.dll</HintPath>
 		</Reference>
 		<Reference Include="FrostyCore">
 			<HintPath>D:\Documents\gw2 stuff\FrostyEditor\FrostyCore.dll</HintPath>
 		</Reference>
 		<Reference Include="FrostyHash">
-		  <HintPath>..\..\..\gw2 stuff\FrostyEditor\FrostyHash.dll</HintPath>
+		  <HintPath>..\..\gw2 stuff\FrostyEditor\FrostyHash.dll</HintPath>
 		</Reference>
 		<Reference Include="FrostySdk">
 			<HintPath>D:\Documents\gw2 stuff\FrostyEditor\FrostySdk.dll</HintPath>
 		</Reference>
 		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="TexturePlugin">
+		  <HintPath>..\..\gw2 stuff\FrostyEditor\Plugins\TexturePlugin.dll</HintPath>
+		</Reference>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Resource Include="Images\Grid.png" />
+	  <Resource Include="Images\Precise_OFF.png" />
+	  <Resource Include="Images\Precise_ON.png" />
 	  <Resource Include="Images\Refresh.png" />
 	  <Resource Include="Images\UITypeIcon.png" />
 	</ItemGroup>
