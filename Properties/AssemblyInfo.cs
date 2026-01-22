@@ -25,4 +25,5 @@ using System.Windows;
 [assembly: PluginAuthor("Window")]
 [assembly: PluginVersion("1.0.0.0")]
 
+[assembly: RegisterOptionsExtension(typeof(UIEditorOptions))]
 [assembly: RegisterAssetDefinition("UIWidgetBlueprint", typeof(UIBlueprintAssetDefinition))]

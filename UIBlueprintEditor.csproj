@@ -66,8 +66,4 @@
 	  <Resource Include="Images\Refresh.png" />
 	  <Resource Include="Images\UITypeIcon.png" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="UIBlueprintEditor.cs" />
-	</ItemGroup>
 </Project>
