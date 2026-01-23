@@ -118,36 +118,43 @@ namespace UIBlueprintEditor
         // switches between the default editor and the ui editor
         private void SwitchViewButton_Click(object sender, RoutedEventArgs e)
         {
+            // toggles the bool
             isEditorActive = !isEditorActive;
             if (isEditorActive)
             {
+                // hides the default view and shows the editor view 
                 _uiEditorLayer.Visibility = Visibility.Visible;
                 _defaultEditorLayer.Visibility = Visibility.Hidden;
 
+                // gets the opened asset as an EbxAssetEntry
                 EbxAssetEntry openedAsset = App.EditorWindow.GetOpenedAssetEntry() as EbxAssetEntry;
 
                 if (openedAsset == null)
                     return;
 
                 /*
+                // broken loading screen
                 FrostyTaskWindow.Show("Loading UI...", "", (task) =>
                 {
                     LoadUI(openedAsset, false, null);
                 });
                 */
 
+                // loads all the ui elements with the openedAsset, isWidget as false
+                // and no widget canvas since we aren't loading a widget
                 LoadUI(openedAsset, false, null);
             }
             else
             {
+                // hides the editor view and shows the default view
                 _uiEditorLayer.Visibility = Visibility.Hidden;
                 _defaultEditorLayer.Visibility = Visibility.Visible;
-                // switches back to default view
             }
         }
 
         private static TextureExporter s_exporter = new TextureExporter();
 
+        // some settings that can be customized
         readonly bool createImages = Config.Get<bool>("RenderTextures", true);
         readonly bool createWidgets = Config.Get<bool>("RenderWidgets", true);
         readonly bool createText = Config.Get<bool>("RenderText", true);
@@ -156,7 +163,7 @@ namespace UIBlueprintEditor
         int roundTo = 1;
 
         bool dragging = false;
-        readonly bool debugging = false;
+        readonly bool debugging = false; // make this 'true' to have a lot of useful info logged
 
 
         // these dictionaries are used later to reference certain values using the TextureId as the key
@@ -166,10 +173,11 @@ namespace UIBlueprintEditor
         Dictionary<dynamic, dynamic> mappingMaxValue = new Dictionary<dynamic, dynamic>();
         Dictionary<dynamic, BitmapImage> mappingTexture = new Dictionary<dynamic, BitmapImage>();
 
-        // this is a seperate method so we can check the TextureId for each bitmap entity
-        // which should make loading times faster since a texture doesnt need to be created for every output entry
+        // this is a separate method so we can check the TextureId for each bitmap entity
+        // which should make loading times faster since a texture doesn't need to be created for every output entry
         private void GetTextures(dynamic rootObject, string textureId)
         {
+            // loops through every texture mapping asset in the ui blueprint
             foreach (var textureItem in rootObject.Object.Internal.TextureMappings)
             {
                 if (debugging)
@@ -177,17 +185,20 @@ namespace UIBlueprintEditor
                     App.Logger.Log("texture");
                 }
 
-                // get the texture map asset from the PointerRef
+                // get the texture mapping asset from the PointerRef
                 var textureMapGuid = ((PointerRef)textureItem).External.FileGuid;
                 var textureMapEbx = App.AssetManager.GetEbxEntry(textureMapGuid);
 
                 EbxAsset textureMapAsset = App.AssetManager.GetEbx(textureMapEbx);
                 dynamic rootObjectTextureMap = textureMapAsset.RootObject;
 
+                // loops through each output in the texture mapping asset
                 foreach (dynamic outputEntry in rootObjectTextureMap.Output)
                 {
+                    // if the texture isn't used in the ui we're loading we will skip creating the texture
                     if (outputEntry.Texture != textureId)
                     {
+                        // sometimes there can be more than one texture id of the same name
                         if (!mappingIdToMapping.ContainsKey(outputEntry.Id))
                         {
                             var min = outputEntry.Min;
@@ -281,7 +292,7 @@ namespace UIBlueprintEditor
                         double x = (double)(uiComponent.Internal.Offset.X);
                         double y = (double)(uiComponent.Internal.Offset.Y);
 
-
+                        
                         if (debugging)
                         {
                             App.Logger.Log("{0} Offset: {1} {2}, Size: {3} {4}, Anchor: {5} {6}",
@@ -291,20 +302,21 @@ namespace UIBlueprintEditor
                             anchorX.ToString(), anchorY.ToString());
                         }
 
+                        // these are the positions used for every ui element we'll create
                         double finalX = anchorX * (mainSizeX - width) + x;
                         double finalY = anchorY * (mainSizeY - height) + y;
 
-                        // objectId by @gabbaton
-                        CString objectIdCStr = ((dynamic)uiComponent.Internal).__Id;
-                        string objectId = objectIdCStr.ToString();
+                        var componentName = uiComponent.Internal.ToString();
 
-                        if ((objectId == "UIElementBitmapEntityData" || objectId == "PVZUIElementBitmapEntityData" || objectId == "PVZUIElementDynamicBitmapEntityData" || objectId == "PVZUIElementDynamicBitmapEntityData") && createImages == true)
+                        if ((componentName == "FrostySdk.Ebx.UIElementBitmapEntityData" || componentName == "FrostySdk.Ebx.PVZUIElementBitmapEntityData" || componentName == "FrostySdk.Ebx.PVZUIElementDynamicBitmapEntityData") && createImages == true)
                         {
                             try
                             {
                                 if (uiComponent.Internal.Visible == true)
                                 {
                                     string textureMapId = uiComponent.Internal.TextureId;
+
+                                    // gets all the textures needed for this bitmap
                                     GetTextures(rootObject, textureMapId);
 
                                     // canvas is used to group each ui component, will be useful for the draggable ui
@@ -322,6 +334,7 @@ namespace UIBlueprintEditor
                                         Stretch = Stretch.Fill,
                                     };
 
+                                    // this TextBlock is only for debugging to see the bitmap names
                                     var tb = new TextBlock
                                     {
                                         Width = width,
@@ -330,9 +343,14 @@ namespace UIBlueprintEditor
                                         Text = uiComponent.Internal.InstanceName,
                                     };
 
+                                    // gets the needed texture from the dictionary created earlier with the texture map id as the key
                                     var texture = mappingTexture[textureMapId];
+
+                                    // sets the source of the texture to the exported texture
                                     image.Source = texture;
 
+                                    // all the values needed for cropping a bitmap
+                                    // they are multiplied by the width/height because min/max values start from 0 - 1
                                     double minX = mappingMinValue[textureMapId].x * width;
                                     double minY = mappingMinValue[textureMapId].y * height;
                                     double maxX = mappingMaxValue[textureMapId].x * width;
@@ -341,6 +359,7 @@ namespace UIBlueprintEditor
                                     Point min = new Point(minX, minY);
                                     Point max = new Point(maxX, maxY);
                                     
+                                    // Clip is used to crop the texture
                                     image.Clip = new RectangleGeometry(new Rect(min, max));
                                     RenderOptions.SetBitmapScalingMode(image, bitmapScalingMode: BitmapScalingMode.Fant);
 
@@ -359,11 +378,12 @@ namespace UIBlueprintEditor
 
                                     image.Opacity = uiComponent.Internal.Alpha;
 
+                                    // sets the position
+                                    Canvas.SetLeft(canvas, finalX);
+                                    Canvas.SetTop(canvas, finalY);
+
                                     if (isWidget)
                                     {
-                                        Canvas.SetLeft(canvas, finalX);
-                                        Canvas.SetTop(canvas, finalY);
-
                                         widgetCanvas.Children.Add(canvas);
                                         canvas.Children.Add(image);
                                         //canvas.Children.Add(tb);
@@ -372,16 +392,13 @@ namespace UIBlueprintEditor
                                     }
                                     else
                                     {
-                                        Canvas.SetLeft(canvas, finalX);
-                                        Canvas.SetTop(canvas, finalY);
-
                                         _uiCanvas.Children.Add(canvas);
                                         canvas.Children.Add(image);
                                         //canvas.Children.Add(tb);
 
                                         // comment out if you don't need text on the image
 
-                                        ControlUI(canvas);
+                                        ControlUI(canvas); // this will make it so you can drag the canvas around
                                     }
                                 }
                             }
@@ -391,7 +408,7 @@ namespace UIBlueprintEditor
                                 // "An item with the same key" error sometimes happens
                             }
                         }
-                        else if ((objectId == "UIElementTextFieldEntityData" || objectId == "PVZUIElementTextFieldEntityData") && createText == true)
+                        else if ((componentName == "FrostySdk.Ebx.UIElementTextFieldEntityData" || componentName == "FrostySdk.Ebx.PVZUIElementTextFieldEntityData") && createText == true)
                         {
                             if (uiComponent.Internal.Visible == true)
                             {
@@ -412,19 +429,17 @@ namespace UIBlueprintEditor
                                 string fieldText = uiComponent.Internal.FieldText;
 
                                 // gets the colour from the xyz value directly from the component
-                                // most text fields use a FontEffect for outlines and colours but this is just easier to read
+                                // most text fields use a FontEffect for outlines and colours but this is just easier to read from
                                 var colorR = (byte)Math.Round(uiComponent.Internal.Color.x * 255);
                                 var colorG = (byte)Math.Round(uiComponent.Internal.Color.y * 255);
                                 var colorB = (byte)Math.Round(uiComponent.Internal.Color.z * 255);
 
-                                // font
+                                // font style
                                 var fontGuid = ((PointerRef)uiComponent.Internal.FontStyle).External.FileGuid;
                                 var fontEbx = App.AssetManager.GetEbxEntry(fontGuid);
 
                                 EbxAsset fontAsset = App.AssetManager.GetEbx(fontEbx);
                                 dynamic rootObjectFont = fontAsset.RootObject;
-
-                                double fontSize = (double)rootObjectFont.Hd.Internal.PointSize;
 
                                 // if there's no text (instead it's set with a property connection or something) it will use InstanceName
                                 if (sid != "")
@@ -439,7 +454,6 @@ namespace UIBlueprintEditor
                                         tb.Text = sid;
                                     }
                                 }
-
                                 // some text fields use "FieldText"
                                 else if (fieldText != "")
                                 {
@@ -468,6 +482,7 @@ namespace UIBlueprintEditor
                                     tb.TextWrapping = TextWrapping.Wrap;
                                 }
 
+                                // setting the actual font
                                 var fontEbxPath = rootObjectFont.Hd.Internal.FontLookup[0].FontAssetPath;
 
                                 var fontEbxTTF = App.AssetManager.GetEbx(fontEbxPath);
@@ -499,9 +514,12 @@ namespace UIBlueprintEditor
                                     tb.FontFamily = new FontFamily(new Uri(tempFile, UriKind.Absolute), fontName);
                                 }
 
-                                tb.FontSize = fontSize;
+                                tb.FontSize = (double)rootObjectFont.Hd.Internal.PointSize;
                                 tb.Foreground = new SolidColorBrush(Color.FromRgb(colorR, colorG, colorB));
 
+                                tb.Margin = new Thickness();
+
+                                // sets the alignment of the text
                                 switch (uiComponent.Internal.Text.VerticalAlignment.ToString())
                                 {
                                     case "UIElementAlignment_Top":
@@ -544,19 +562,17 @@ namespace UIBlueprintEditor
                                     App.Logger.Log(tb.VerticalAlignment.ToString());
                                 }
 
+                                // sets the position
+                                Canvas.SetLeft(canvas, finalX);
+                                Canvas.SetTop(canvas, finalY);
+
                                 if (isWidget)
                                 {
-                                    Canvas.SetLeft(canvas, finalX);
-                                    Canvas.SetTop(canvas, finalY);
-
                                     widgetCanvas.Children.Add(canvas);
                                     canvas.Children.Add(tb);
                                 }
                                 else
                                 {
-                                    Canvas.SetLeft(canvas, finalX);
-                                    Canvas.SetTop(canvas, finalY);
-
                                     _uiCanvas.Children.Add(canvas);
                                     canvas.Children.Add(tb);
 
@@ -564,7 +580,7 @@ namespace UIBlueprintEditor
                                 }
                             }
                         }
-                        else if (objectId == "UIElementFillEntityData" || objectId == "PVZUIElementFillEntityData")
+                        else if (componentName == "FrostySdk.Ebx.UIElementFillEntityData" || componentName == "FrostySdk.Ebx.PVZUIElementFillEntityData")
                         {
                             if (uiComponent.Internal.Visible == true)
                             {
@@ -597,19 +613,17 @@ namespace UIBlueprintEditor
                                 rect.Fill = new SolidColorBrush(Color.FromRgb(colorR, colorG, colorB));
                                 rect.Opacity = alpha;
 
+                                // sets the position
+                                Canvas.SetLeft(canvas, finalX);
+                                Canvas.SetTop(canvas, finalY);
+
                                 if (isWidget)
                                 {
-                                    Canvas.SetLeft(canvas, finalX);
-                                    Canvas.SetTop(canvas, finalY);
-
                                     widgetCanvas.Children.Add(canvas);
                                     canvas.Children.Add(rect);
                                 }
                                 else
                                 {
-                                    Canvas.SetLeft(canvas, finalX);
-                                    Canvas.SetTop(canvas, finalY);
-
                                     _uiCanvas.Children.Add(canvas);
                                     canvas.Children.Add(rect);
 
@@ -617,17 +631,18 @@ namespace UIBlueprintEditor
                                 }
                             }
                         }
-                        else if (objectId == "UIElementButtonEntityData")
+                        else if (componentName == "FrostySdk.Ebx.UIElementButtonEntityData")
                         {
                             // does nothing for buttons since they are basically just hitboxes
                         }
-                        else if ((objectId == "UIElementWidgetReferenceEntityData") && createWidgets == true)
+                        else if ((componentName == "FrostySdk.Ebx.UIElementWidgetReferenceEntityData") && createWidgets == true)
                         {
                             var canvasWidget = new Canvas
                             {
                                 Tag = Convert.ToString(uiComponent.Internal.__InstanceGuid)
                             };
 
+                            // gets the reference blueprint of the widget as an EBX
                             var widgetGuid = ((PointerRef)uiComponent.Internal.Blueprint).External.FileGuid;
                             var widgetEbx = App.AssetManager.GetEbxEntry(widgetGuid);
 
@@ -636,7 +651,7 @@ namespace UIBlueprintEditor
 
                             var widgetSize = rootObjectWidget.Object.Internal.Size;
 
-                            if (uiComponent.Internal.UseElementSize)
+                            if (!uiComponent.Internal.UseElementSize)
                             {
                                 canvasWidget.Width = widgetSize.X;
                                 canvasWidget.Height = widgetSize.Y;
@@ -647,8 +662,11 @@ namespace UIBlueprintEditor
                                 canvasWidget.Height = height;
                             }
 
-                            Canvas.SetLeft(canvasWidget, finalX);
-                            Canvas.SetTop(canvasWidget, finalY);
+                            double widgetFinalX = anchorX * (mainSizeX - widgetSize.X) + x;
+                            double widgetFinalY = anchorY * (mainSizeY - widgetSize.Y) + y;
+
+                            Canvas.SetLeft(canvasWidget, widgetFinalX);
+                            Canvas.SetTop(canvasWidget, widgetFinalY);
 
                             if (debugging)
                             {
@@ -672,9 +690,7 @@ namespace UIBlueprintEditor
                         else
                         {
                             // creates a basic rectangle if its an unknown component
-
-                            // currently if you rename the Id of your components it wont get recognized
-                            // an easy way to fix that is export the bin file and re-import which will reset the Id of each component
+                            // if you're using this for another game this is what most ui elements will render as
 
                             App.Logger.Log("Unrecognized UI component");
 
@@ -700,20 +716,18 @@ namespace UIBlueprintEditor
                                 Opacity = 0.2,
                             };
 
+                            // sets the position
+                            Canvas.SetLeft(canvas, finalX);
+                            Canvas.SetTop(canvas, finalY);
+
                             if (isWidget)
                             {
-                                Canvas.SetLeft(canvas, finalX);
-                                Canvas.SetTop(canvas, finalY);
-
                                 widgetCanvas.Children.Add(canvas);
                                 canvas.Children.Add(rect);
                                 canvas.Children.Add(tb);
                             }
                             else
                             {
-                                Canvas.SetLeft(canvas, finalX);
-                                Canvas.SetTop(canvas, finalY);
-
                                 _uiCanvas.Children.Add(canvas);
                                 canvas.Children.Add(rect);
                                 canvas.Children.Add(tb);
@@ -729,7 +743,7 @@ namespace UIBlueprintEditor
             }
         }
 
-        System.Windows.Point startPosition;
+        Point startPosition;
         private void ControlUI(Canvas canvas)
         {
             canvas.MouseMove += CanvasMouseMove;
@@ -744,6 +758,8 @@ namespace UIBlueprintEditor
             Canvas canvas = sender as Canvas;
 
             dragging = true;
+
+            // gets the mouse position
             startPosition = Mouse.GetPosition(_uiCanvas);
         }
 
@@ -762,9 +778,11 @@ namespace UIBlueprintEditor
             float movedX = (float)roundedX;
             float movedY = (float)roundedY;
 
+            // sets the position
             Canvas.SetLeft(canvas, roundedX);
             Canvas.SetTop(canvas, roundedY);
 
+            // gets the Guid of the canvas from the tag created earlier so we can use it as an ebx asset
             var canvasGuid = canvas.Tag;
 
             _refreshButton.Visibility = Visibility.Visible;
@@ -778,6 +796,7 @@ namespace UIBlueprintEditor
             EbxAsset asset = App.AssetManager.GetEbx(ebxEntry);
             dynamic rootObject = asset.RootObject;
 
+            // goes through every ui component until the guid of it matches guid from the tag
             foreach (var layer in rootObject.Object.Internal.Layers)
             {
                 foreach (var uiComponent in layer.Internal.Elements)
@@ -796,6 +815,7 @@ namespace UIBlueprintEditor
 
                         if (!useAnchor)
                         {
+                            // if useAnchor is false, we remove the anchor and set the position with offset
                             uiComponent.Internal.Offset.X = movedX;
                             uiComponent.Internal.Offset.Y = movedY;
 
@@ -804,6 +824,7 @@ namespace UIBlueprintEditor
                         }
                         else
                         {
+                            // if useAnchor is true, we remove the offset and set the position with anchor
                             uiComponent.Internal.Anchor.X = movedX / rootObject.Object.Internal.Size.X;
                             uiComponent.Internal.Anchor.Y = movedY / rootObject.Object.Internal.Size.Y;
 
@@ -811,8 +832,10 @@ namespace UIBlueprintEditor
                             uiComponent.Internal.Offset.Y = 0;
                         }
 
+                        // saves it to the ebx so that it will show up in game or in frosty
                         App.AssetManager.ModifyEbx(rootObject.Name, asset);
 
+                        // refreshes the data explorer so that it shows as modified on the left
                         App.EditorWindow.DataExplorer.RefreshItems();
 
                         _uiComponentInfo.Text = 
@@ -870,8 +893,10 @@ namespace UIBlueprintEditor
             }
         }
 
+        // right clicking will hide the ui, this is useful if some ui elements are in the way of something you wanna move
         private void CanvasHideUI(object sender, EventArgs e)
         {
+            // it will only work if you aren't dragging a ui element otherwise it will be buggy
             if (!dragging)
             {
                 Canvas canvas = sender as Canvas;
@@ -888,12 +913,15 @@ namespace UIBlueprintEditor
             }
         }
 
-        // switches between the roundTo value and 1 which changes how precise ui dragging is (idk why i didn't just call it "Snapping" lol)
+        // switches between the roundTo value and 1 which changes how precise ui dragging is
+        // idk why i didn't just call it "Snapping" lol
         bool isPrecise = true;
         private void PreciseButton_Click(object sender, RoutedEventArgs e)
         {
+            // toggles the bool
             isPrecise = !isPrecise;
 
+            // gets the icon for the off and on icons
             ImageSource offIcon = new ImageSourceConverter().ConvertFromString("pack://application:,,,/UIBlueprintEditor;component/Images/Precise_OFF.png") as ImageSource;
             ImageSource onIcon = new ImageSourceConverter().ConvertFromString("pack://application:,,,/UIBlueprintEditor;component/Images/Precise_ON.png") as ImageSource;
 
