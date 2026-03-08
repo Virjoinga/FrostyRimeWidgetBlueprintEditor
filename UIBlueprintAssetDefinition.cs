@@ -3,6 +3,7 @@ using Frosty.Core.Controls;
 using FrostySdk.Interfaces;
 using System;
 using System.Windows.Media;
+using UIBlueprintEditor.Editor;
 
 namespace UIBlueprintEditor
 {
