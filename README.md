@@ -21,7 +21,7 @@ Then, Right click the project to add the references:
 
 You can get these from your Frosty Editor folder.
 Then just build the project by right clicking the project and clicking build, or you can press Ctrl + B. You can put the
-UIBlueprintEditor.dll in the Plugins folder in Frosty Editor.
+RimeWidgetBlueprintEditor.dll in the Plugins folder in Frosty Editor.
 
 ## Update log
 v1.1.0.0:

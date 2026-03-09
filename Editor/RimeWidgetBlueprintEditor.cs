@@ -1402,8 +1402,8 @@ namespace RimeWidgetBlueprintEditor.Editor
             isPrecise = !isPrecise;
 
             // gets the icon for the off and on icons
-            ImageSource offIcon = new ImageSourceConverter().ConvertFromString("pack://application:,,,/UIBlueprintEditor;component/Images/Precise_OFF.png") as ImageSource;
-            ImageSource onIcon = new ImageSourceConverter().ConvertFromString("pack://application:,,,/UIBlueprintEditor;component/Images/Precise_ON.png") as ImageSource;
+            ImageSource offIcon = new ImageSourceConverter().ConvertFromString("pack://application:,,,/RimeWidgetBlueprintEditor;component/Images/Precise_OFF.png") as ImageSource;
+            ImageSource onIcon = new ImageSourceConverter().ConvertFromString("pack://application:,,,/RimeWidgetBlueprintEditor;component/Images/Precise_ON.png") as ImageSource;
 
             if (isPrecise)
             {

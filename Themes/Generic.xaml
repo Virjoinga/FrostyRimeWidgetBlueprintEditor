@@ -27,7 +27,7 @@
                                 </Grid.RowDefinitions>
 
                                 <Grid.Background>
-                                    <ImageBrush x:Name="PART_BackgroundGrid" ImageSource="/UIBlueprintEditor;component/Images/Grid.png" TileMode="Tile" Viewport="0,0,28,28" ViewportUnits="Absolute" Stretch="None"/>
+                                    <ImageBrush x:Name="PART_BackgroundGrid" ImageSource="/RimeWidgetBlueprintEditor;component/Images/Grid.png" TileMode="Tile" Viewport="0,0,28,28" ViewportUnits="Absolute" Stretch="None"/>
                                 </Grid.Background>
 
                                 <Border Panel.ZIndex="10">
@@ -45,13 +45,13 @@
 
                                 <Button Panel.ZIndex="10" x:Name="PART_Refresh" HorizontalAlignment="Left" Width="25" Height="25" Margin="2,0,0,0" ToolTip="Refresh UI" IsEnabled="True">
                                     <Button.Content>
-                                        <Image Width="14" Source="/UIBlueprintEditor;component/Images/Refresh.png"/>
+                                        <Image Width="14" Source="/RimeWidgetBlueprintEditor;component/Images/Refresh.png"/>
                                     </Button.Content>
                                 </Button>
 
                                 <Button Panel.ZIndex="10" x:Name="PART_Precise" HorizontalAlignment="Left" Width="25" Height="25" Margin="30,0,0,0" ToolTip="Precise Movement (ON)" IsEnabled="True">
                                     <Button.Content>
-                                        <Image x:Name="PART_PreciseImage" Width="14" Source="/UIBlueprintEditor;component/Images/Precise_ON.png"/>
+                                        <Image x:Name="PART_PreciseImage" Width="14" Source="/RimeWidgetBlueprintEditor;component/Images/Precise_ON.png"/>
                                     </Button.Content>
                                 </Button>
 
