@@ -2,7 +2,7 @@ using Frosty.Core;
 using Frosty.Core.Controls.Editors;
 using FrostySdk.Attributes;
 
-namespace UIBlueprintEditor
+namespace RimeWidgetBlueprintEditor
 {
     public class FrostyUIEditor : FrostyCustomComboDataEditor<string, string>
     {

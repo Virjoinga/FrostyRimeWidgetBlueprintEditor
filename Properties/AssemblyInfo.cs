@@ -1,4 +1,4 @@
-﻿using UIBlueprintEditor;
+﻿using RimeWidgetBlueprintEditor;
 using Frosty.Core.Attributes;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -21,9 +21,9 @@ using System.Windows;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("4b612468-9b6a-4304-88a5-055c3575eb3d")]
 
-[assembly: PluginDisplayName("UI Blueprint Editor")]
-[assembly: PluginAuthor("Window")]
-[assembly: PluginVersion("1.1.0.0")]
+[assembly: PluginDisplayName("RimeWidgetBlueprintEditor")]
+[assembly: PluginAuthor("Virjoinga")]
+[assembly: PluginVersion("1.0.0.0")]
 
 [assembly: RegisterOptionsExtension(typeof(UIEditorOptions))]
-[assembly: RegisterAssetDefinition("UIWidgetBlueprint", typeof(UIBlueprintAssetDefinition))]
+[assembly: RegisterAssetDefinition("RimeWidgetBlueprint", typeof(RimeWidgetBlueprintAssetDefinition))]

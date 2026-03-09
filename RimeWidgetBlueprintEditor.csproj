@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+		<Configurations>Developer;Release</Configurations>
+		<Platforms>x64</Platforms>
+		<TargetFrameworks>net48</TargetFrameworks>
+		<AssemblyTitle>RimeWidgetBlueprintEditorPlugin</AssemblyTitle>
+		<Product>RimeWidgetBlueprintEditorPlugin</Product>
+		<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<UseWPF>true</UseWPF>
+		<OutputType>Library</OutputType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Developer|x64'">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\Developer\Debug\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+		<OutputPath>bin\Release\Final\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="Images\Grid.png" />
+	  <None Remove="Images\Precise_OFF.png" />
+	  <None Remove="Images\Precise_ON.png" />
+	  <None Remove="Images\Refresh.png" />
+	  <None Remove="Images\UITypeIcon.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="FrostyControls">
+		  <HintPath>..\..\..\HarGabt\FrostyToolsuite\FrostyEditor\bin\Developer\Debug\FrostyControls.dll</HintPath>
+		</Reference>
+		<Reference Include="FrostyCore">
+		  <HintPath>..\..\..\HarGabt\FrostyToolsuite\FrostyEditor\bin\Developer\Debug\FrostyCore.dll</HintPath>
+		</Reference>
+		<Reference Include="FrostyHash">
+		  <HintPath>..\..\..\HarGabt\FrostyToolsuite\FrostyEditor\bin\Developer\Debug\FrostyHash.dll</HintPath>
+		</Reference>
+		<Reference Include="FrostySdk">
+		  <HintPath>..\..\..\HarGabt\FrostyToolsuite\FrostyEditor\bin\Developer\Debug\FrostySdk.dll</HintPath>
+		</Reference>
+		<Reference Include="LocalizedStringPlugin">
+		  <HintPath>..\..\..\HarGabt\FrostyToolsuite\Plugins\LocalizedStringPlugin\bin\Developer\Debug\LocalizedStringPlugin.dll</HintPath>
+		</Reference>
+		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="SharpDX.Direct3D11">
+		  <HintPath>..\..\..\HarGabt\FrostyToolsuite\FrostyEditor\ThirdParty\SharpDX.Direct3D11.dll</HintPath>
+		</Reference>
+		<Reference Include="SharpDX.DXGI">
+		  <HintPath>..\..\..\HarGabt\FrostyToolsuite\FrostyEditor\ThirdParty\SharpDX.DXGI.dll</HintPath>
+		</Reference>
+		<Reference Include="TexturePlugin">
+		  <HintPath>..\..\..\HarGabt\FrostyToolsuite\Plugins\TexturePlugin\bin\Developer\Debug\TexturePlugin.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="Images\Grid.png" />
+	  <Resource Include="Images\Precise_OFF.png" />
+	  <Resource Include="Images\Precise_ON.png" />
+	  <Resource Include="Images\Refresh.png" />
+	  <Resource Include="Images\UITypeIcon.png" />
+	</ItemGroup>
+</Project>

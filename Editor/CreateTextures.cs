@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace UIBlueprintEditor.Editor
+namespace RimeWidgetBlueprintEditor.Editor
 {
     public class CreateTextures
     {

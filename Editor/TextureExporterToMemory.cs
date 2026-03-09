@@ -11,7 +11,7 @@ using D3D11 = SharpDX.Direct3D11;
 
 // Copy + pasted TextureExporter from TexturePlugin, but writes the textures to memory instead
 
-namespace UIBlueprintEditor.Editor
+namespace RimeWidgetBlueprintEditor.Editor
 {
     [EbxClassMeta(EbxFieldType.Struct)]
     public class FrostyTextureSettingsItem

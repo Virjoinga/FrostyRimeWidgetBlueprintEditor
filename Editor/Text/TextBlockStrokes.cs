@@ -16,7 +16,7 @@ using System.Windows.Media;
 
 // huge thanks to them! idk why outlined text isnt a thing in the first place, but they made this so much easier!
 
-namespace UIBlueprintEditor.Editor.Text
+namespace RimeWidgetBlueprintEditor.Editor.Text
 {
     public class StrokeAdorner : Adorner
     {

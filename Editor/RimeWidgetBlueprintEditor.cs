@@ -5,7 +5,7 @@ using FrostySdk.Attributes;
 using FrostySdk.Ebx;
 using FrostySdk.Interfaces;
 using FrostySdk.IO;
-using FrostySdk.Managers;
+using FrostySdk.Managers.Entries;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,9 +26,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
-using UIBlueprintEditor.Editor.Text;
+using RimeWidgetBlueprintEditor.Editor.Text;
 
-namespace UIBlueprintEditor.Editor
+namespace RimeWidgetBlueprintEditor.Editor
 {
     [TemplatePart(Name = PART_SwitchView, Type = typeof(Button))]
     [TemplatePart(Name = PART_DefaultEditorLayer, Type = typeof(Grid))]
